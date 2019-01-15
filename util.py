@@ -21,16 +21,16 @@ def build_frames(size):
     frames = list()
     # create the first frame
     frame = zeros((size,size))
-    step = randint(0, size-1)
+    row = randint(0, size-1)
     # decide if we are heading left or right
     right = 1 if random() < 0.5 else 0
     col = 0 if right else size-1
-    frame[step, col] = 1
+    frame[row, col] = 1
     frames.append(frame)
     # create all remaining frames
     for i in range(1, size-1):
         col = i if right else size-1-i
-        frame, step = next_frame(step, frame, col)
+        frame, row = next_frame(row, frame, col)
         frames.append(frame)
     return frames, right
 
@@ -41,8 +41,13 @@ def generate_examples(size, n_patterns):
         X.append(frames)
         y.append(right)
     # resize as [samples, timesteps, width, height, channels]
-    X = numpy.array(X).reshape(n_patterns, size-1, size, size, 1)
-    y = numpy.array(y).reshape(n_patterns, 1)
+    # X = numpy.array(X).reshape(n_patterns, size-1, size, size, 1)
+    # y = numpy.array(y).reshape(n_patterns, 1)
+    
+    # Add a 'channel' dimension
+    X = numpy.expand_dims(X, axis=2)
+    X = numpy.array(X)
+    y = numpy.array(y)
     return X, y
 
 def plot_all_frames(frames, size):

@@ -19,8 +19,11 @@ class LSTMModel(nn.Module):
         self.criterion = nn.NLLLoss()
 
     def forward(self, x):
-        # expect x.shape = (samples, timesteps, channels, height, width)
+        print(x.shape)
         samples, timesteps, c, h, w = x.size()
+        # 
+        # This is BAD - we can't just combine features from different sequences
+        # 
         c_in = x.view(samples*timesteps, c, h, w)
         c_out = self.features(c_in)
 
