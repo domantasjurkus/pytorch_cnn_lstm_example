@@ -11,6 +11,7 @@ class LSTMModel(nn.Module):
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
         )
 
+        # lstm_input_size is determined by the number of features we get from self.features()
         self.lstm = nn.LSTM(input_size=lstm_input_size, hidden_size=lstm_hidden_size,
             num_layers=1, batch_first=True)
         self.classifier = nn.Linear(32, 2)
@@ -19,11 +20,8 @@ class LSTMModel(nn.Module):
         self.criterion = nn.NLLLoss()
 
     def forward(self, x):
-        print(x.shape)
         samples, timesteps, c, h, w = x.size()
-        # 
-        # This is BAD - we can't just combine features from different sequences
-        # 
+
         c_in = x.view(samples*timesteps, c, h, w)
         c_out = self.features(c_in)
 
