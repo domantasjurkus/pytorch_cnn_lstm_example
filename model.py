@@ -20,16 +20,12 @@ class LSTMModel(nn.Module):
 
     def forward(self, x):
         # expect x.shape = (samples, timesteps, channels, height, width)
-        print(x.shape)
         samples, timesteps, c, h, w = x.size()
         c_in = x.view(samples*timesteps, c, h, w)
         c_out = self.features(c_in)
 
         r_in = c_out.view(samples, timesteps, -1)
         r_out, (h_n, h_c) = self.lstm(r_in)
-        # print("r_out", r_out.shape)
-        # print("h_n", h_n.shape)
-        # print("h_c", h_c.shape)
 
         classes = self.classifier(r_out[:, -1, :])
         softmax = F.log_softmax(classes, dim=1)
